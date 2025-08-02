@@ -1,0 +1,98 @@
+minimumLimaVersion: 1.1.0
+
+cpus: 6
+memory: 6GiB
+mountType: virtiofs
+networks:
+  - vzNAT: true
+rosetta:
+  enabled: false
+vmType: vz
+base:
+  - template://_default/mounts
+
+arch: "default"
+images:
+  - location: "https://cloud-images.ubuntu.com/noble/current/noble-server-cloudimg-arm64.img"
+    arch: "aarch64"
+    digest: "sha256:7afae09463e8758a768322113e57f8c56eb1fad379caa04477d7e661cd556b79"
+  - location: "https://cloud-images.ubuntu.com/noble/current/noble-server-cloudimg-amd64.img"
+    arch: "x86_64"
+    digest: "sha256:9611c5a9d6c43e60090305c58a1aeb5d9f1f0c0bec409004185e6284755322d1"
+
+provision:
+  # Setup XWindow and SSH
+  - mode: user
+    script: |
+      #!/bin/bash
+      set -eux -o pipefail
+      if ! grep "User git" ~/.ssh/config; then
+          HOST_USER=$(ls /Users)
+          cat<<EOF >> ~/.ssh/config
+      Host github.com
+        User git
+        Port 22
+        StrictHostKeyChecking no
+        PasswordAuthentication no
+        IdentityFile /Users/$HOST_USER/.ssh/id_ed25519
+      EOF
+      fi
+
+      if ! grep -e "^export DISPLAY=host.lima.internal:0" ~/.bashrc; then
+          echo "export DISPLAY=host.lima.internal:0" >> ~/.bashrc
+      fi
+  # install pre-requisite software
+  - mode: user
+    script: |
+      #!/bin/bash
+      set -eux -o pipefail
+      sudo apt-get update && apt-get install -y \
+        aspell \
+        aspell-en \
+        jq \
+        xxd \
+        build-essential \
+        firefox \
+        xpdf
+
+        # texlive-full \
+        if ! command -v node; then
+            # Download and install nvm:
+            curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.40.3/install.sh | bash
+
+            # in lieu of restarting the shell
+            . "$HOME/.nvm/nvm.sh"
+
+            # Download and install Node.js:
+            nvm install 22
+        fi
+
+      if ! grep "initialSidebarState no" ~/.xpdfrc; then
+          HOST_USER=$(ls /Users)
+          cat<<EOF >> ~/.xpdfrc
+      initialSidebarState no
+      EOF
+      fi
+  # install coding agents
+  - mode: user
+    script: |
+      #!/bin/bash
+      set -eux -o pipefail
+
+      if ! command -v node; then
+          # Download and install nvm:
+          curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.40.3/install.sh | bash
+
+          # in lieu of restarting the shell
+          \. "$HOME/.nvm/nvm.sh"
+
+          # Download and install Node.js:
+          nvm install 20
+          # Install Anthropic Claude Code
+          npm install -g @anthropic-ai/claude-code
+          # Install Google gemini cli
+          npm install -g @google/gemini-cli
+      fi
+
+      EOF
+      fi
