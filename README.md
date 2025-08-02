@@ -17,11 +17,11 @@ This project requires:
 - xquartz: X Server to display GUI applications running in the vm
 
 You need install homebrew before setup this project. Then run the
-`setup.sh` script to install limavm and create the sandbox for coding
+`setup-box.sh` script to install limavm and create the sandbox for coding
 agent with claude code and gemini cli pre-installed.
 
 # Enable GUI applications
 
-If you which to run GUI applications inside the VM, you run the
-`startx.sh` script first. This script sets up X Window system on MacOS
-by using the xquartz package.
+If you which to run GUI applications inside the VM, you run the `setup-x.sh`
+script first. This script sets up X Window system on MacOS by using the xquartz
+package.

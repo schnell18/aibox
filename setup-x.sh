@@ -1,5 +1,8 @@
 #!/bin/bash
 
+# Setup X Window system on MacOS and allow display from aibox.
+# This script works on MacOS only!
+
 # fail fast
 set -eo pipefail
 OS_DISTRO="macos"

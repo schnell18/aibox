@@ -1,5 +1,8 @@
 #!/bin/bash
 
+# Setup lima and create aibox.
+# This script works on MacOS only!
+
 # fail fast
 set -eo pipefail
 
