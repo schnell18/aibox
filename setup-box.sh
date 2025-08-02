@@ -24,12 +24,14 @@ function setup {
     # ensure pre-requisite software are installed: stow, homebrew (MacOS only)
     if [[ $OS_DISTRO == "macos" ]]; then
         echo "=================================================="
-        echo "= Setting up aibox dependencies                   "
+        echo "= Installing aibox dependencies...                "
         echo "=================================================="
         ensure_install lima
+        echo "= Starting aibox ...                              "
         limactl -y start aibox.yaml
         echo "=================================================="
-        echo "= setup done!                                     "
+        echo "= Setup done!                                     "
+        echo "= Start hacking by typing 'limactl shell aibox' ! "
         echo "=================================================="
     fi
 }

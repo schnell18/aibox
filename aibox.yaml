@@ -46,26 +46,13 @@ provision:
     script: |
       #!/bin/bash
       set -eux -o pipefail
-      sudo apt-get update && apt-get install -y \
+      sudo apt-get update && sudo apt-get install -y \
         aspell \
         aspell-en \
         jq \
         xxd \
         build-essential \
-        firefox \
         xpdf
-
-        # texlive-full \
-        if ! command -v node; then
-            # Download and install nvm:
-            curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.40.3/install.sh | bash
-
-            # in lieu of restarting the shell
-            . "$HOME/.nvm/nvm.sh"
-
-            # Download and install Node.js:
-            nvm install 22
-        fi
 
       if ! grep "initialSidebarState no" ~/.xpdfrc; then
           HOST_USER=$(ls /Users)
@@ -73,6 +60,16 @@ provision:
       initialSidebarState no
       EOF
       fi
+  # install web browser
+  - mode: user
+    script: |
+      #!/bin/bash
+      set -eux -o pipefail
+      sudo curl -fsSLo /usr/share/keyrings/brave-browser-archive-keyring.gpg \
+           https://brave-browser-apt-release.s3.brave.com/brave-browser-archive-keyring.gpg
+      sudo curl -fsSLo /etc/apt/sources.list.d/brave-browser-release.sources \
+           https://brave-browser-apt-release.s3.brave.com/brave-browser.sources
+      sudo apt update && sudo apt install -y brave-browser
   # install coding agents
   - mode: user
     script: |
